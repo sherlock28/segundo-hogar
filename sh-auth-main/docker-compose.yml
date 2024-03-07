@@ -1,0 +1,24 @@
+version: "3.9"
+services:
+  sh-auth:
+    build:
+      context: .
+      target: prod
+    container_name: sh-auth
+    restart: always
+    env_file:
+      - ./.env
+    ports:
+      - 4000:4000
+    networks:
+      - default
+      - sh-network
+      - nginx-proxy_default
+    external_links:
+      - hasura
+    
+networks:
+  sh-network:
+    external: true
+  nginx-proxy_default:
+    external: true 

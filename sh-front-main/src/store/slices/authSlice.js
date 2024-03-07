@@ -1,0 +1,121 @@
+import { createSlice } from "@reduxjs/toolkit";
+import jwt_decode from "jwt-decode";
+import { auth } from "services";
+
+export const authSlice = createSlice({
+  name: "auth",
+  initialState: {
+    isAuthenticated: false,
+    user: null,
+    user_category: "",
+    token: null,
+    isFetching: false,
+    isSuccess: false,
+    isError: false,
+    errorMessage: "",
+  },
+  reducers: {
+    authLoading: (state) => {
+      if (state.isFetching === false) {
+        state.isFetching = true;
+      }
+    },
+    successSignIn: (state, action) => {
+      state.isFetching = false;
+      state.token = action.payload.data;
+      state.user = action.payload.user;
+      state.user_category = action.payload.user["user-category-id"];
+      state.isAuthenticated = true;
+      state.isSuccess = true;
+    },
+    successSignInWithSocialNet: (state, action) => {
+      state.isFetching = false;
+      state.token = action.payload.data;
+      state.user = action.payload.user;
+      state.user_category = action.payload.user["user-category-id"];
+      state.isAuthenticated = true;
+      state.isSuccess = true;
+    },
+    successSignOut: (state, action) => {
+      state.isFetching = false;
+      state.user = null;
+      state.token = null;
+      state.isAuthenticated = false;
+      state.isSuccess = false;
+      state.isError = false;
+      state.errorMessage = "";
+    },
+    authFailed: (state, action) => {
+      state.isFetching = false;
+      state.isError = true;
+      state.errorMessage = action.payload.message;
+    },
+    clearState: (state, action) => {
+      state.isSuccess = false;
+      state.isError = false;
+      state.errorMessage = "";
+    },
+  },
+});
+
+export const {
+  authLoading,
+  authFailed,
+  successSignIn,
+  successSignInWithSocialNet,
+  successSignOut,
+  clearState,
+} = authSlice.actions;
+
+export const signInAction = (data) => async (dispatch) => {
+  dispatch(authLoading());
+  try {
+    const { email, password } = data;
+    const response = await auth.signInService({ email, password });
+    const statusCode = response.status;
+    const res = await response.json();
+    res.user = jwt_decode(res.data);
+    console.log("sdasda")
+
+    if (statusCode === 200) {
+      localStorage.setItem("userData", JSON.stringify(res.user));
+      dispatch(successSignIn(res));
+    }
+    if (statusCode === 401) {
+      dispatch(authFailed(res));
+    }
+  } catch (error) {
+    dispatch(authFailed(error.message));
+  }
+};
+
+export const signInSocialNetAction = (data) => async (dispatch) => {
+  dispatch(authLoading());
+  try {
+    const response = await auth.signInServiceWithOnlyEmail({ email: data });
+    const statusCode = response.status;
+    const res = await response.json();
+    res.user = jwt_decode(res.data);
+
+    if (statusCode === 200) {
+      dispatch(successSignInWithSocialNet(res));
+      console.log("signInSocialNetAction con 200")
+    }
+    if (statusCode === 400 || statusCode === 401) {
+      dispatch(authFailed(res));
+    }
+  } catch (error) {
+    dispatch(authFailed(error.message));
+  }
+  console.log("info: ", data)
+};
+
+export const signOutAction = () => async (dispatch) => {
+  dispatch(authLoading());
+  dispatch(successSignOut());
+  dispatch(clearState());
+};
+
+export default authSlice.reducer;
+
+export const authSelector = (state) => state.auth;

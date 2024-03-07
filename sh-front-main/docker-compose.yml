@@ -1,0 +1,28 @@
+version: '3.7'
+services:
+  app:
+    build:
+      context: .
+      target: react_dev
+    container_name: app
+    restart: always
+    command: npm start
+    volumes:
+      - .:/app
+    env_file:
+      - ./.env
+    ports:
+      - 3000:3000
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+    tty: true
+    networks:
+      - sh-network
+      - nginx-proxy_default
+
+networks:
+  sh-network:
+    external: true
+  nginx-proxy_default:
+    external: true 

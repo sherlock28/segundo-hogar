@@ -1,0 +1,26 @@
+version: "3.9"
+services:
+  sh-students:
+    build:
+      context: .
+      target: prod
+    container_name: sh-students
+    restart: always
+    ports:
+      - 5000:5000
+    networks:
+      - default
+      - sh-network
+      - nginx-proxy_default
+    environment:
+      - VIRTUAL_HOST=student.segundohogar.com.ar
+      - VIRTUAL_PORT=5000
+      - LETSENCRYPT_HOST=student.segundohogar.com.ar
+    volumes:
+      - ./src/data/students.json:/usr/app/src/data/students.json
+
+networks:
+  sh-network:
+    external: true
+  nginx-proxy_default:
+    external: true 

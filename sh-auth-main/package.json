@@ -1,0 +1,56 @@
+{
+  "name": "sh-auth",
+  "version": "1.0.0",
+  "description": "Auth service for Segundo Hogar project",
+  "main": "src/",
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development ts-node-dev src/",
+    "build": "tsc",
+    "start": "npm run build && cross-env NODE_ENV=production node build/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sherlock28/sh-auth.git"
+  },
+  "keywords": [
+    "NodeJs",
+    "Hasura",
+    "Auth",
+    "JWT"
+  ],
+  "author": "Rodolfo Caceres",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sherlock28/sh-auth/issues"
+  },
+  "homepage": "https://github.com/sherlock28/sh-auth#readme",
+  "devDependencies": {
+    "@types/bcryptjs": "2.4.2",
+    "@types/cors": "^2.8.12",
+    "@types/express": "^4.17.13",
+    "@types/ip": "1.1.0",
+    "@types/jsonwebtoken": "8.5.9",
+    "@types/morgan": "^1.9.3",
+    "@types/node": "^18.0.0",
+    "@types/node-fetch": "2.6.2",
+    "@types/pg": "8.6.5",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^4.7.4"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "cross-env": "7.0.3",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "ip": "1.1.8",
+    "jsonwebtoken": "^8.5.1",
+    "node-fetch": "2.6.1",
+    "pg": "8.7.3",
+    "morgan": "^1.10.0",
+    "winston": "3.7.2"
+  },
+  "volta": {
+    "node": "18.16.1"
+  }
+}

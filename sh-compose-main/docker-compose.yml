@@ -1,0 +1,67 @@
+version: '3.9'
+services:
+  hasura:
+    image: hasura/graphql-engine:latest
+    container_name: hasura
+    ports:
+      - "7070:8080"
+    depends_on:
+      - database
+    restart: always
+    env_file:
+      - ./hasura/hasura.env
+    networks:
+      - default
+      - sh-network
+      - nginx-proxy_default
+
+  database:
+    image: postgres:13
+    container_name: database
+    restart: always
+    ports:
+      - 5432:5432
+    env_file:
+      - ./postgresql/postgres.env
+    volumes:
+      - pgdb_data:/var/lib/postgresql/data
+      - ./postgresql/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - ./localtime.buenos_aires:/etc/localtime.buenos_aires
+    networks:
+      - sh-network
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    restart: always
+    ports:
+      - 8080:80
+    env_file:
+      - ./pgadmin/pgadmin.env
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+      - ./pgadmin/servers.json:/pgadmin4/servers.json
+      - ./pgadmin/pgpass:/pgpass
+    depends_on:
+      - database
+    networks:
+      - sh-network
+      - nginx-proxy_default
+  hdb:
+    image: busybox:latest
+    depends_on:
+      - hasura
+      - database
+
+networks:
+  sh-network:
+    external: false
+    name: sh-network
+  nginx-proxy_default:
+    external: true 
+
+volumes:
+  neodata:
+  neoplugins:
+  pgdb_data:
+  pgadmin_data:

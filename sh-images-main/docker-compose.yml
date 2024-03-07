@@ -1,0 +1,28 @@
+version: "3.9"
+services:
+  sh-images: 
+    build: 
+      context: .
+      target: prod
+    container_name: sh-images
+    restart: always
+    env_file:
+      - ./.env
+    ports:
+      - 4100:4100
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./.env:/usr/.env
+    networks:
+      - default
+      - sh-network
+      - nginx-proxy_default
+    external_links:
+      - hasura
+
+networks:
+  sh-network:
+    external: true
+  nginx-proxy_default:
+    external: true 
